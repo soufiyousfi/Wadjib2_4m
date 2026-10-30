@@ -37,7 +37,7 @@
 <script>
 const solved={},tries={};let score=0;const total=9;
 function norm(s){return (s||'').toString().trim().toLowerCase().replace(/\s+/g,'').replace(/[×*]/g,'').replace(/[٫،]/g,'.').replace(/−/g,'-').replace(/√\s*/g,'√').replace(/,/g,'.')}
-function check(id,ok,hint){const q=document.querySelector('[data-id="'+id+'"]');const fb=q.querySelector('.feedback');if(solved[id]){fb.className='feedback success';fb.textContent='تم احتساب النقاط لهذا السؤال مسبقًا.';return}if(ok){solved[id]=true;score+=Number(q.dataset.points);fb.className='feedback success';fb.textContent='إجابة صحيحة! أحسنت، تم احتساب النقاط.';q.querySelector('.solution').style.display='block';document.getElementById('score').textContent=Number(score.toFixed(1))+' / 20';q.querySelectorAll('input,select,.btn,.keys button').forEach(e=>e.disabled=true);done()}else{tries[id]=(tries[id]||0)+1;if(tries[id]===1){fb.className='feedback hint';fb.textContent='ليست صحيحة بعد. التلميح الأول: '+hint}else if(tries[id]===2){fb.className='feedback hint';fb.textContent='ليست صحيحة بعد. التلميح الثاني: '+HINT2[id]}else{solved[id]=true;fb.className='feedback hint';fb.textContent='انتهت المحاولات الثلاث. اقرأ الإجابة النموذجية وسلم التنقيط.';q.querySelector('.solution').style.display='block';q.querySelectorAll('input,select,.btn,.keys button').forEach(e=>e.disabled=true);done()}}}
+function check(id,ok,hint){const q=document.querySelector('[data-id="'+id+'"]');const fb=q.querySelector('.feedback');if(solved[id]){fb.className='feedback success';fb.textContent='تم احتساب النقاط لهذا السؤال مسبقًا.';return}if(ok){solved[id]=true;score+=Number(q.dataset.points);fb.className='feedback success';fb.textContent='إجابة صحيحة! أحسنت، تم احتساب النقاط.';q.querySelector('.solution').style.display='block';document.getElementById('score').textContent=Number(score.toFixed(1))+' / 20';q.querySelectorAll('input,select,.btn,.keys button').forEach(e=>e.disabled=true);FX.good(q,tries[id]||0,fb);done()}else{tries[id]=(tries[id]||0)+1;if(tries[id]===1){fb.className='feedback hint';fb.textContent='ليست صحيحة بعد. التلميح الأول: '+hint;FX.bad(q)}else if(tries[id]===2){fb.className='feedback hint';fb.textContent='ليست صحيحة بعد. التلميح الثاني: '+HINT2[id];FX.bad(q)}else{solved[id]=true;fb.className='feedback hint';fb.textContent='انتهت المحاولات الثلاث. اقرأ الإجابة النموذجية وسلم التنقيط.';q.querySelector('.solution').style.display='block';q.querySelectorAll('input,select,.btn,.keys button').forEach(e=>e.disabled=true);FX.bad(q,true);done()}}}
 function validRoots(v){v=norm(v).replace(/[{}()x=+]/g,'');if(v==='±3√5')return true;const p=v.split(/[;.\/]|أو|و/).filter(Boolean);return p.length===2&&p.includes('3√5')&&p.includes('-3√5')}
 document.querySelectorAll('.question').forEach(q=>{const ins=q.querySelectorAll('input[type=text]');if(!ins.length)return;let last=ins[0];ins.forEach(i=>i.addEventListener('focus',()=>last=i));const k=document.createElement('div');k.className='keys';['√','²','±','−',';',',','/','×','⌫'].forEach(c=>{const b=document.createElement('button');b.type='button';b.textContent=c;b.addEventListener('mousedown',e=>e.preventDefault());b.addEventListener('click',()=>{const p=last.selectionStart??last.value.length,e=last.selectionEnd??p;if(c==='⌫'){const a=p===e?Math.max(p-1,0):p;last.value=last.value.slice(0,a)+last.value.slice(e);last.setSelectionRange(a,a)}else{last.value=last.value.slice(0,p)+c+last.value.slice(e);last.setSelectionRange(p+c.length,p+c.length)}last.focus()});k.appendChild(b)});q.querySelector('.row').after(k)});
 
@@ -62,8 +62,94 @@ q7:['<bdi dir="ltr">x = √45</bdi> أو <bdi dir="ltr">x = −√45</bdi>|0,75'
 q8:['<bdi dir="ltr">PGCD(312 ; 234) = 78</bdi> بالخوارزمية: 78 عائلة|2','4 أكياس سميد لكل عائلة|1','3 قوارير زيت لكل عائلة|1'],
 q9:['طول الضلع <bdi dir="ltr">√162 = 9√2 m</bdi>|1','المحيط <bdi dir="ltr">36√2 m</bdi>|1','التكلفة <bdi dir="ltr">7200√2 ≈ 10180,8 DA</bdi>|1','القرار: المبلغ لا يكفي لأن <bdi dir="ltr">10180,8 > 10000</bdi>|1']};
 Object.entries(SCALE).forEach(([id,rows])=>{const sol=document.querySelector('[data-id="'+id+'"] .solution');const d=document.createElement('div');d.className='scale';d.innerHTML='<h4>سلم التنقيط</h4><table>'+rows.map(r=>{const[t,n]=r.split('|');return '<tr><td>'+t+'</td><td class="n">'+n+' ن</td></tr>'}).join('')+'</table>';sol.appendChild(d)});
-function done(){const n=Object.keys(solved).length;document.getElementById('progressText').textContent=n+' من '+total+' أسئلة منجزة';document.getElementById('progressFill').style.width=(n/total*100)+'%'}
+function done(){const n=Object.keys(solved).length;if(n===total)setTimeout(()=>FX.final(score,20),900);document.getElementById('progressText').textContent=n+' من '+total+' أسئلة منجزة';document.getElementById('progressFill').style.width=(n/total*100)+'%'}
 function showAll(){document.querySelectorAll('.solution').forEach(e=>e.style.display='block')}
-function resetQuiz(){score=0;Object.keys(tries).forEach(k=>delete tries[k]);document.querySelectorAll('#quiz input,#quiz select,#quiz .btn,#quiz .keys button').forEach(e=>e.disabled=false);Object.keys(solved).forEach(k=>delete solved[k]);document.querySelectorAll('input').forEach(e=>e.value='');document.querySelectorAll('select').forEach(e=>e.selectedIndex=0);document.querySelectorAll('.feedback').forEach(e=>{e.className='feedback';e.textContent=''});document.querySelectorAll('.solution').forEach(e=>e.style.display='none');document.getElementById('score').textContent='0 / 20';document.getElementById('progressText').textContent='أجب عن الأسئلة للبدء';document.getElementById('progressFill').style.width='0%';window.scrollTo({top:0,behavior:'smooth'})}
+function resetQuiz(){score=0;FX.reset();Object.keys(tries).forEach(k=>delete tries[k]);document.querySelectorAll('#quiz input,#quiz select,#quiz .btn,#quiz .keys button').forEach(e=>e.disabled=false);Object.keys(solved).forEach(k=>delete solved[k]);document.querySelectorAll('input').forEach(e=>e.value='');document.querySelectorAll('select').forEach(e=>e.selectedIndex=0);document.querySelectorAll('.feedback').forEach(e=>{e.className='feedback';e.textContent=''});document.querySelectorAll('.solution').forEach(e=>e.style.display='none');document.getElementById('score').textContent='0 / 20';document.getElementById('progressText').textContent='أجب عن الأسئلة للبدء';document.getElementById('progressFill').style.width='0%';window.scrollTo({top:0,behavior:'smooth'})}
+</script>
+<!-- FX: نجوم ورسائل تحفيزية -->
+<style>
+.fx-star{position:fixed;z-index:50;font-size:1.6rem;pointer-events:none;animation:fxfly .9s ease-out forwards}
+@keyframes fxfly{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(200deg);opacity:0}}
+.fx-shake{animation:fxshake .45s}
+@keyframes fxshake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.fx-pop{animation:fxpop .5s}
+@keyframes fxpop{50%{transform:scale(1.04)}}
+.fx-toast{position:fixed;left:50%;top:84px;transform:translateX(-50%);z-index:60;background:#fff;color:#172033;border-radius:30px;padding:10px 22px;font-weight:bold;box-shadow:0 6px 24px #0003;animation:fxtoast 2.2s forwards;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+.fx-toast.good{border:3px solid #22c55e}.fx-toast.bad{border:3px solid #f59e0b}
+@keyframes fxtoast{0%{opacity:0;top:60px}12%{opacity:1;top:84px}80%{opacity:1}100%{opacity:0}}
+.fx-stars{font-size:1.15rem;letter-spacing:2px;margin-inline-start:6px}
+.fx-total{background:#fbbf24;color:#172033;border-radius:22px;padding:3px 12px;font-weight:bold;white-space:nowrap}
+.fx-sound{background:none;border:0;font-size:1.2rem;cursor:pointer;padding:0 4px}
+.fx-over{position:fixed;inset:0;z-index:70;background:#0008;display:flex;align-items:center;justify-content:center;padding:16px}
+.fx-card{background:#fff;color:#172033;border-radius:18px;padding:24px 20px;max-width:380px;width:100%;text-align:center;animation:fxpop .6s}
+.fx-card .big{font-size:2.6rem;margin:6px 0}
+.fx-card button{margin-top:12px;border:0;border-radius:9px;padding:9px 20px;background:#1d4ed8;color:#fff;font:inherit;font-weight:bold;cursor:pointer}
+</style>
+<script>
+const FX = (() => {
+  const PRAISE = ["ممتاز!", "أحسنت!", "رائع، واصل هكذا!", "عمل متقن!", "بارك الله فيك!", "إجابة ذكية!"];
+  const RETRY = ["لا بأس، حاول مرة أخرى 💪", "اقتربت! اقرأ التلميح وأعد المحاولة", "الخطأ طريق التعلّم، جرّب ثانية 🌱", "أنت قادر على ذلك، ركّز قليلا!"];
+  const LOST = "لا تحزن 🌱 اقرأ الإجابة النموذجية جيدا، وستنجح في السؤال القادم";
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  let stars = 0, sound = true, finished = false, actx = null;
+  try { sound = localStorage.getItem("fx-sound") !== "0"; } catch (e) {}
+
+  function tone(freqs){
+    if (!sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      freqs.forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + i * .12;
+        o.frequency.value = f; o.type = "sine"; g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .25);
+        o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + .26);
+      });
+    } catch (e) {}
+  }
+  function toast(text, cls){
+    document.querySelectorAll(".fx-toast").forEach(e => e.remove());
+    const t = document.createElement("div"); t.className = "fx-toast " + cls; t.textContent = text;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 2300);
+  }
+  function burst(el, n){
+    const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = Math.max(r.top, 0) + 30;
+    for (let i = 0; i < n; i++){
+      const s = document.createElement("span"); s.className = "fx-star"; s.textContent = i % 3 ? "⭐" : "✨";
+      const a = Math.random() * 2 * Math.PI, d = 70 + Math.random() * 90;
+      s.style.left = x + "px"; s.style.top = y + "px";
+      s.style.setProperty("--dx", Math.cos(a) * d + "px"); s.style.setProperty("--dy", Math.sin(a) * d - 40 + "px");
+      document.body.appendChild(s); setTimeout(() => s.remove(), 950);
+    }
+  }
+  function again(el, cls){ el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function bar(){
+    const b = document.querySelector(".scorebar"); if (!b || document.getElementById("fxTotal")) return;
+    const t = document.createElement("span"); t.id = "fxTotal"; t.className = "fx-total"; t.textContent = "⭐ 0";
+    const m = document.createElement("button"); m.className = "fx-sound"; m.title = "الصوت"; m.textContent = sound ? "🔊" : "🔇";
+    m.onclick = () => { sound = !sound; m.textContent = sound ? "🔊" : "🔇"; try { localStorage.setItem("fx-sound", sound ? "1" : "0"); } catch (e) {} };
+    b.querySelector(".score").after(t, m);
+  }
+  function upd(){ const t = document.getElementById("fxTotal"); if (t) t.textContent = "⭐ " + stars; }
+  return {
+    /* tries = عدد الأخطاء قبل الجواب الصحيح: 0 → 3 نجوم، 1 → نجمتان، 2 → نجمة */
+    good(el, tries, fb){
+      const n = Math.max(3 - tries, 1); stars += n; upd(); bar();
+      if (fb) fb.insertAdjacentHTML("beforeend", ' <span class="fx-stars">' + "⭐".repeat(n) + "</span>");
+      burst(el, 6 + n * 3); again(el, "fx-pop"); toast(pick(PRAISE) + " " + "⭐".repeat(n), "good"); tone([523, 659, 784]);
+    },
+    bad(el, last){ again(el, "fx-shake"); toast(last ? LOST : pick(RETRY), "bad"); tone(last ? [330, 262] : [392, 330]); },
+    final(score, max){
+      if (finished) return; finished = true;
+      const p = score / max, msg = p >= .9 ? "أداء ممتاز! أنت نجم القسم 🏆" : p >= .7 ? "عمل جيد جدا! واصل التقدم 👏" : p >= .5 ? "عمل مقبول، راجع الأخطاء وستتحسن 💪" : "لا تستسلم! أعد التمارين وستنجح 🌱";
+      const o = document.createElement("div"); o.className = "fx-over";
+      o.innerHTML = `<div class="fx-card"><div class="big">${p >= .5 ? "🎉" : "💪"}</div><h2 style="margin:0">${msg}</h2>
+        <p>علامتك: <b>${String(Math.round(score * 100) / 100).replace(".", ",")} / ${max}</b><br>نجومك: <b>⭐ ${stars}</b></p><button>متابعة</button></div>`;
+      o.querySelector("button").onclick = () => o.remove(); o.onclick = e => { if (e.target === o) o.remove(); };
+      document.body.appendChild(o); if (p >= .5){ burst(o.querySelector(".fx-card"), 24); tone([523, 659, 784, 1047]); }
+    },
+    reset(){ stars = 0; finished = false; upd(); },
+    bar
+  };
+})();
+FX.bar();
 </script>
 </body></html>
