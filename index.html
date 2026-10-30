@@ -1,707 +1,246 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> متوسطة العربي بن مهيدي وادي فراغة الواجب المنزلي التفاعلي - الرابعة متوسط</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --primary: #1e40af;
-            --primary-light: #eff6ff;
-            --secondary: #0f766e;
-            --success: #15803d;
-            --success-bg: #dcfce7;
-            --warning: #b45309;
-            --warning-bg: #fef3c7;
-            --danger: #b91c1c;
-            --danger-bg: #fee2e2;
-            --dark: #1e293b;
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --border: #cbd5e1;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--bg); color: var(--dark); line-height: 1.75; padding-bottom: 60px; }
-
-        header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%);
-            color: white;
-            padding: 24px 18px;
-            text-align: center;
-            border-bottom: 4px solid #fbbf24;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        header h4 { font-size: 0.95rem; font-weight: 500; opacity: 0.9; }
-        header h1 { font-size: 1.6rem; font-weight: 800; color: #fef08a; margin: 6px 0; }
-        header p { font-size: 0.95rem; opacity: 0.95; }
-
-        .sticky-bar {
-            position: sticky;
-            top: 0;
-            z-index: 999;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(8px);
-            padding: 12px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 880px;
-            margin: 0 auto 24px auto;
-            border-radius: 0 0 14px 14px;
-            border: 1px solid var(--border);
-            border-top: none;
-        }
-
-        .score-badge {
-            background: var(--primary);
-            color: white;
-            padding: 5px 16px;
-            border-radius: 25px;
-            font-weight: 800;
-            font-size: 1.15rem;
-        }
-
-        .container { max-width: 880px; margin: 0 auto; padding: 0 15px; }
-
-        .exercise-card {
-            background: var(--card);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 25px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-        }
-
-        .exercise-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--primary-light);
-            padding: 12px 16px;
-            border-radius: 10px;
-            border-right: 5px solid var(--primary);
-            margin-bottom: 18px;
-        }
-        .exercise-header h2 { font-size: 1.25rem; color: var(--primary); font-weight: 800; }
-        .pts-badge { background: white; color: var(--primary); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; border: 1px solid #bfdbfe; }
-
-        .context-box {
-            background: #f8fafc;
-            border: 1px dashed #94a3b8;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            font-size: 1.05rem;
-        }
-
-        .math {
-            direction: ltr;
-            display: inline-block;
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
-            background: #e2e8f0;
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin: 0 3px;
-            color: #0f172a;
-        }
-
-        .q-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 18px;
-            background: #ffffff;
-            transition: all 0.2s;
-        }
-        .q-item.solved { border-color: #86efac; background: #f0fdf4; }
-        .q-item.failed { border-color: #fca5a5; background: #fef2f2; }
-
-        .q-text {
-            font-weight: 800;
-            font-size: 1.08rem;
-            color: #1e293b;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .attempts-tag {
-            font-size: 0.8rem;
-            color: #64748b;
-            background: #f1f5f9;
-            padding: 3px 10px;
-            border-radius: 12px;
-            white-space: nowrap;
-            font-weight: 700;
-        }
-
-        .input-area {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        input[type="text"], select {
-            padding: 10px 14px;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            min-width: 220px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .ltr-in { direction: ltr; text-align: center; }
-        input:focus, select:focus { border-color: var(--primary); }
-
-        .sym-btn {
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 800;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-        .sym-btn:hover { background: #cbd5e1; }
-
-        .btn-check {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .btn-check:hover { background: #1d4ed8; }
-        .btn-check:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        .feedback {
-            margin-top: 12px;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.96rem;
-            display: none;
-        }
-        .feedback.success { display: block; background: var(--success-bg); color: var(--success); border-right: 4px solid var(--success); }
-        .feedback.hint { display: block; background: var(--warning-bg); color: var(--warning); border-right: 4px solid var(--warning); }
-        .feedback.fail { display: block; background: var(--danger-bg); color: var(--danger); border-right: 4px solid var(--danger); }
-
-        .solution-box {
-            margin-top: 14px;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-right: 4px solid var(--secondary);
-            padding: 15px;
-            border-radius: 10px;
-            display: none;
-            font-size: 0.98rem;
-        }
-        .solution-box h4 { color: var(--secondary); margin-bottom: 8px; }
-        .step { display: block; margin-bottom: 5px; }
-
-        @media (max-width: 600px) {
-            .input-area { flex-direction: column; align-items: stretch; }
-            input[type="text"], select, .btn-check { width: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الواجب المنزلي التفاعلي | السنة الرابعة متوسط</title>
+<style>
+:root{color-scheme:light dark;--site-primary:#1d4ed8;--site-secondary:#0f766e;--site-background:light-dark(#f1f5f9,#0f172a);--site-on-background:light-dark(#172033,#e5e7eb);--surface:light-dark(#ffffff,#182235);--surface2:light-dark(#eff6ff,#202e44);--text:light-dark(#172033,#f1f5f9);--muted:light-dark(#64748b,#bdc8d8);--border:light-dark(#dbe3ef,#39485f);--good:light-dark(#166534,#86efac);--goodbg:light-dark(#dcfce7,#163b2a);--warn:light-dark(#92400e,#fcd34d);--warnbg:light-dark(#fef3c7,#493719);--bad:light-dark(#991b1b,#fca5a5);--badbg:light-dark(#fee2e2,#4a1d1d);--key:light-dark(#e2e8f0,#2b3a52)}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--site-background);color:var(--site-on-background);font-family:"Tahoma","Arial",sans-serif;line-height:1.8}
+header{background:linear-gradient(120deg,var(--site-primary),var(--site-secondary));color:white;text-align:center;padding:22px 16px;border-bottom:4px solid #fbbf24}
+header .school{font-size:.95rem;opacity:.95}
+header .teacher{font-size:1.05rem;font-weight:bold;margin-top:2px}
+header h1{font-size:1.6rem;margin:4px 0;color:#fef08a}
+header p{margin:0;opacity:.9}
+.wrap{max-width:880px;margin:auto;padding:0 16px 40px}
+.scorebar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px 16px;margin:0 auto 20px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-top:0;border-radius:0 0 14px 14px;box-shadow:0 3px 12px #00000012}
+.score{background:var(--site-primary);color:white;border-radius:22px;padding:3px 14px;font-weight:bold;white-space:nowrap}
+.progress{height:6px;background:var(--border);border-radius:10px;overflow:hidden;flex-basis:100%}
+.progress span{display:block;height:100%;width:0;background:#22c55e;transition:width .25s}
+.rules{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:18px;font-size:.92rem}
+.card{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:22px;box-shadow:0 4px 14px #00000008}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);padding:10px 14px;border-right:4px solid var(--site-primary);border-radius:10px;margin-bottom:6px}
+.cardhead h2{font-size:1.2rem;color:var(--site-primary);margin:0}
+.subt{font-size:.88rem;color:var(--muted);margin:0 4px 12px}
+.pts{font-size:.85rem;color:var(--site-primary);background:var(--surface);border:1px solid var(--border);padding:1px 10px;border-radius:20px;white-space:nowrap}
+.intro{background:var(--surface2);padding:12px;border-radius:10px;margin-bottom:16px}
+.question{border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:14px}
+.qtitle{font-weight:bold;margin-bottom:6px}
+.step{border-top:1px dashed var(--border);padding-top:10px;margin-top:10px}
+.slabel{font-size:.93rem;margin-bottom:6px}
+.slabel small{color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+input,select{max-width:100%;min-width:100px;padding:9px 11px;border:2px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font:inherit;font-weight:bold}
+input[type=text]{direction:ltr;text-align:center;width:240px}
+input:disabled,select:disabled{opacity:.75}
+.btn{border:0;border-radius:9px;padding:9px 17px;background:var(--site-primary);color:white;font:inherit;font-weight:bold;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.45;cursor:default;filter:none}
+.btn.secondary{background:var(--site-secondary)}
+.tries{font-size:.85rem;color:var(--muted)}
+.keys{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.keys button{background:var(--key);color:var(--text);border:1px solid var(--border);border-radius:7px;min-width:40px;padding:3px 8px;font:inherit;font-size:1.05rem;cursor:pointer;direction:ltr}
+.keys button.wide{min-width:62px;font-size:.88rem}
+.feedback{display:none;margin-top:10px;padding:9px 12px;border-radius:8px;font-weight:bold}
+.feedback.success{display:block;background:var(--goodbg);color:var(--good)}
+.feedback.hint{display:block;background:var(--warnbg);color:var(--warn)}
+.feedback.wrong{display:block;background:var(--badbg);color:var(--bad)}
+.solution{display:none;margin-top:10px;padding:12px;background:var(--surface2);border-right:4px solid var(--site-secondary);border-radius:8px}
+.solution h4{margin:0 0 5px;color:var(--site-secondary)}
+.math{direction:ltr;unicode-bidi:isolate;display:block;text-align:right;font-family:monospace;font-size:1.02rem;white-space:pre-wrap;margin-top:4px}
+bdi{white-space:nowrap}
+.footer{text-align:center;color:var(--muted);font-size:.9rem;padding:8px 0 22px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 0}
+@media(max-width:560px){header h1{font-size:1.3rem}.card{padding:14px}.scorebar{font-size:.92rem}.row input[type=text]{flex:1;width:120px}.cardhead h2{font-size:1.05rem}.keys button{min-width:36px}}
+</style>
 </head>
 <body>
+<header>
+  <div class="school">متوسطة العربي بن مهيدي</div>
+  <div class="teacher">الأستاذ: Soufi</div>
+  <h1>الواجب المنزلي التفاعلي</h1>
+  <p>السنة الرابعة متوسط · المقطع الأول</p>
+</header>
+<div class="wrap">
+<div class="scorebar"><strong>النتيجة</strong><span class="score" id="score">0 / 20</span><span id="progressText" class="tiny tries">أجب عن الأسئلة للبدء</span><div class="progress"><span id="progressFill"></span></div></div>
+<div class="rules">اقرأ السؤال ثم أجب خطوة بخطوة. لكل خطوة <b>ثلاث محاولات</b> مع تلميح بعد كل خطأ، ثم يظهر الحل المفصل.
+العلامة: المحاولة الأولى كاملة، الثانية 75%، الثالثة 50%. الجواب القريب (أو الصحيح غير المبسّط) يُقبل بنصف علامة المحاولة. أسئلة الاختيار (نعم / لا) لها محاولة واحدة.
+استعمل الأزرار لكتابة الرموز الرياضية.</div>
+<main id="quiz"></main>
+<div class="actions"><button class="btn" id="reset">إعادة المحاولة من البداية</button></div>
+<div class="footer">بالتوفيق والنجاح لجميع التلاميذ 🌟</div>
+</div>
+<script>
+const DATA = [{"title": "التمرين الأول", "sub": "القاسم المشترك الأكبر واختزال الكسور", "ctx": "نعتبر العددين الطبيعيين 1428 و 630.", "qs": [{"q": "(1) هل العددان 1428 و 630 أوليان فيما بينهما؟ علّل.", "steps": [{"label": "اختر الإجابة", "type": "choice", "options": ["نعم، أوليان فيما بينهما", "لا، ليسا أوليين فيما بينهما"], "ans": 1, "pts": 0.5, "hints": [], "expl": "عددان أوليان فيما بينهما يعني أن قاسمهما المشترك الوحيد هو 1. هنا العددان زوجيان، فهما يقبلان القسمة على 2.", "calc": "1428 ÷ 2 = 714   ;   630 ÷ 2 = 315"}, {"label": "التعليل: اكتب قاسما مشتركا للعددين يختلف عن 1", "type": "cd", "a": 1428, "b": 630, "greatest": false, "pts": 1.5, "hints": ["انظر إلى رقم آحاد كل من العددين.", "العددان ينتهيان برقم زوجي (8 و 0)."], "expl": "العدد 2 يقسم 1428 و 630 لأنهما زوجيان (وكذلك 3 و 6 و 7 و 14 و 21 و 42). إذن ليسا أوليين فيما بينهما.", "calc": "1428 = 2 × 714   ;   630 = 2 × 315"}]}, {"q": "(2) احسب <bdi dir=\"ltr\">PGCD(1428 ; 630)</bdi> باستعمال خوارزمية إقليدس.", "steps": [{"label": "أكمل أول قسمة إقليدية: <bdi dir=\"ltr\">1428 = 630 × 2 + ...</bdi>", "type": "num", "ans": 168, "tol": 0, "pts": 0.5, "hints": ["احسب 630 × 2 ثم اطرحه من 1428.", "1428 − 1260 = ..."], "expl": "630 × 2 = 1260 ، والباقي 1428 − 1260 = 168 وهو أصغر من 630.", "calc": "1428 = 630 × 2 + 168"}, {"label": "القاسم المشترك الأكبر <bdi dir=\"ltr\">PGCD(1428 ; 630)</bdi>", "type": "cd", "a": 1428, "b": 630, "greatest": true, "pts": 1.5, "hints": ["تابع: اقسم 630 على 168، ثم القاسم على الباقي، حتى تصل إلى باق معدوم.", "آخر باق غير معدوم هو PGCD. القسمة الثالثة: 168 = 126 × 1 + 42"], "expl": "نتابع القسمات الإقليدية حتى نصل إلى باق معدوم، وآخر باق غير معدوم هو القاسم المشترك الأكبر.", "calc": "1428 = 630 × 2 + 168\n630 = 168 × 3 + 126\n168 = 126 × 1 + 42\n126 = 42 × 3 + 0\nPGCD(1428 ; 630) = 42"}]}, {"q": "(3) اكتب الكسر <bdi dir=\"ltr\">630/1428</bdi> على شكل كسر غير قابل للاختزال.", "steps": [{"label": "الكسر المختزل (استعمل الزر /)", "type": "fracred", "num": 630, "den": 1428, "pts": 2, "hints": ["اقسم البسط والمقام على <bdi dir=\"ltr\">PGCD(1428 ; 630) = 42</bdi>.", "630 ÷ 42 = 15"], "expl": "نقسم البسط والمقام على القاسم المشترك الأكبر 42 فنحصل على كسر غير قابل للاختزال.", "calc": "630/1428 = (630 ÷ 42)/(1428 ÷ 42) = 15/34"}]}]}, {"title": "التمرين الثاني", "sub": "الجذور التربيعية", "ctx": "لتكن: <bdi dir=\"ltr\">A = √54 − √24 + 2√150</bdi> ، <bdi dir=\"ltr\">B = 2√5 × √20</bdi> ، <bdi dir=\"ltr\">C = 15/√5</bdi>", "qs": [{"q": "(1) اكتب A على الشكل <bdi dir=\"ltr\">a√6</bdi> حيث a عدد طبيعي.", "steps": [{"label": "العبارة A على الشكل <bdi dir=\"ltr\">a√6</bdi>", "type": "rad", "ans": "11√6", "form": "^11×?√6$", "pts": 1.5, "hints": ["اكتب 54 = 9 × 6 و 24 = 4 × 6 و 150 = 25 × 6.", "√54 = 3√6 ، √24 = 2√6 ، √150 = 5√6"], "expl": "نبسّط كل جذر ثم نجمع الحدود المتشابهة.", "calc": "A = 3√6 − 2√6 + 2 × 5√6\nA = (3 − 2 + 10)√6 = 11√6"}]}, {"q": "(2) بيّن أن B عدد طبيعي.", "steps": [{"label": "قيمة B", "type": "num", "ans": 20, "tol": 0, "pts": 1.5, "hints": ["√5 × √20 = √(5 × 20)", "√100 = 10"], "expl": "نستعمل الخاصية √a × √b = √(a × b).", "calc": "B = 2√(5 × 20) = 2√100 = 2 × 10 = 20"}]}, {"q": "(3) اكتب C على شكل نسبة مقامها عدد ناطق، ثم بسّطها.", "steps": [{"label": "العبارة C بعد التبسيط", "type": "rad", "ans": "3√5", "form": "^3×?√5$", "pts": 1.5, "hints": ["اضرب البسط والمقام في √5.", "√5 × √5 = 5"], "expl": "نضرب البسط والمقام في √5 فيصبح المقام عددا ناطقا، ثم نبسّط.", "calc": "C = (15 × √5)/(√5 × √5) = 15√5/5 = 3√5"}]}, {"q": "(4) حل المعادلة <bdi dir=\"ltr\">x² = 45</bdi>", "steps": [{"label": "الحلان (افصل بينهما بالرمز ; أو استعمل ±)", "type": "roots", "ans": "3√5", "form": "^3×?√5$", "pts": 1.5, "hints": ["للمعادلة x² = a حيث a موجب حلان متعاكسان.", "45 = 9 × 5 إذن √45 = 3√5"], "expl": "x² = 45 تعني x = √45 أو x = −√45 ، ونبسّط √45.", "calc": "√45 = √(9 × 5) = 3√5\nx = 3√5   أو   x = −3√5"}]}]}, {"title": "التمرين الثالث — الوضعية الإدماجية", "sub": "PGCD والجذور في وضعية من الحياة", "ctx": "تريد جمعية خيرية توزيع 312 كيسا من السميد و 234 قارورة من الزيت بالتساوي على أكبر عدد ممكن من العائلات. أرضية المخزن مربعة الشكل مساحتها <bdi dir=\"ltr\">162 m²</bdi>، وتريد الجمعية إحاطتها بإطار ثمن المتر الواحد منه <bdi dir=\"ltr\">200 DA</bdi>، والمبلغ المتوفر <bdi dir=\"ltr\">10000 DA</bdi>. خذ <bdi dir=\"ltr\">√2 ≈ 1,414</bdi>", "qs": [{"q": "(1) ما هو أكبر عدد ممكن من العائلات؟ وماذا تأخذ كل عائلة؟", "steps": [{"label": "أكبر عدد من العائلات", "type": "cd", "a": 312, "b": 234, "greatest": true, "pts": 2, "hints": ["عدد العائلات يقسم 312 و 234 معا، ونريد أكبرها: احسب <bdi dir=\"ltr\">PGCD(312 ; 234)</bdi>.", "312 = 234 × 1 + 78 ، ثم اقسم 234 على 78."], "expl": "عدد العائلات قاسم مشترك للعددين 312 و 234، وأكبر عدد هو PGCD(312 ; 234).", "calc": "312 = 234 × 1 + 78\n234 = 78 × 3 + 0\nPGCD(312 ; 234) = 78  : 78 عائلة"}, {"label": "عدد أكياس السميد لكل عائلة", "type": "num", "ans": 4, "tol": 0, "pts": 1, "hints": ["اقسم عدد الأكياس على عدد العائلات.", "312 ÷ 78 = ..."], "expl": "نقسم عدد الأكياس على عدد العائلات.", "calc": "312 ÷ 78 = 4"}, {"label": "عدد قوارير الزيت لكل عائلة", "type": "num", "ans": 3, "tol": 0, "pts": 1, "hints": ["اقسم عدد القوارير على عدد العائلات.", "234 ÷ 78 = ..."], "expl": "نقسم عدد القوارير على عدد العائلات.", "calc": "234 ÷ 78 = 3"}]}, {"q": "(2) هل يكفي المبلغ المتوفر لشراء الإطار؟ برّر بحساب التكلفة.", "steps": [{"label": "طول ضلع الأرضية (بالمتر) على الشكل <bdi dir=\"ltr\">a√2</bdi>", "type": "rad", "ans": "9√2", "form": "^9×?√2$", "pts": 1, "hints": ["مساحة المربع = الضلع × الضلع، إذن الضلع = √162.", "162 = 81 × 2"], "expl": "الضلع هو العدد الموجب الذي مربعه 162.", "calc": "c = √162 = √(81 × 2) = 9√2 m"}, {"label": "تكلفة الإطار (بالدينار، قيمة مقربة)", "type": "num", "ans": 10180.8, "tol": 0.01, "abs": 2, "pts": 2, "hints": ["محيط المربع = 4 × الضلع = 36√<bdi dir=\"ltr\">2 m</bdi> ، ثم اضرب في 200.", "36√2 × 200 = 7200√2 ≈ 7200 × 1,414"], "expl": "نحسب المحيط ثم نضربه في ثمن المتر الواحد.", "calc": "P = 4 × 9√2 = 36√2 m\n36√2 × 200 = 7200√2\n7200 × 1,414 = 10180,8 DA"}, {"label": "القرار", "type": "choice", "options": ["نعم، المبلغ يكفي", "لا، المبلغ لا يكفي"], "ans": 1, "pts": 1, "hints": [], "expl": "نقارن التكلفة بالمبلغ المتوفر: 10180,8 > 10000", "calc": "10180,8 DA > 10000 DA : المبلغ لا يكفي (ينقص 180,8 DA)"}]}]}];
+const KEYS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "+", "−", "×", "÷", "/", "(", ")", "√", "²", "±", ";"];
+const MULT = [1, 0.75, 0.5], NEAR = 0.5;
 
-    <header>
-        <h4>الجمهورية الجزائرية الديمقراطية الشعبية - وزارة التربية الوطنية</h4>
-        <h1>التقويم التفاعلي في الرياضيات - الصيغة (أ)</h1>
-        <p>السنة الرابعة متوسط | لديك 3 محاولات لكل سؤال</p>
-    </header>
+const fmtPts = x => (Math.round(x * 100) / 100).toString().replace(".", ",");
+const close = (a, b, e) => Math.abs(a - b) <= (e ?? 1e-9);
+const gcd = (a, b) => b ? gcd(b, a % b) : a;
+const isPow10 = n => { if (n < 10) return false; while (n % 10 === 0) n /= 10; return n === 1; };
 
-    <div class="sticky-bar">
-        <div>
-            <span>النقطة المحصلة: </span>
-            <span class="score-badge" id="scoreDisplay">0 / 20</span>
-        </div>
-        <div id="statusText" style="font-weight:700; color:#475569; font-size:0.9rem;">أدخل إجابتك ثم اضغط على تحقق</div>
-    </div>
+function norm(s){
+  return (s || "").toString()
+    .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    .replace(/[٫،]/g, ",").replace(/\s+/g, "")
+    .replace(/−|–/g, "-").replace(/\*/g, "×")
+    .replace(/DA|دج|دينار|kg|كغ|m²|m|م$/gi, "").replace(/^[a-zA-Z]=/, "");
+}
+/* عبارة رياضية فيها أعداد و + − × ÷ / ( ) √ ² ← قيمة عددية أو null */
+function value(s){
+  let t = norm(s).replace(/,/g, ".").replace(/×|x|X/g, "*").replace(/÷|:/g, "/").replace(/²/g, "**2");
+  if (!/^[\d.+\-*/()√]+$/.test(t.replace(/\*\*2/g, ""))) return null;
+  t = t.replace(/√\(/g, "S(").replace(/√(\d+(\.\d+)?)/g, "S($1)");
+  if (t.includes("√")) return null;
+  t = t.replace(/(\d|\))(S|\()/g, "$1*$2");
+  try { const v = Function("S", '"use strict";return (' + t + ")")(Math.sqrt); return (typeof v === "number" && isFinite(v)) ? v : null; }
+  catch (e) { return null; }
+}
+const hasOp = s => /[+\-×÷/:*]/.test(norm(s).replace(/^-/, ""));
+const num = s => { const t = norm(s).replace(/,/g, "."); return /^-?\d+(\.\d+)?$/.test(t) ? parseFloat(t) : null; };
 
-    <div class="container">
+/* النتيجة: ok | near | bad | form | plain */
+function grade(st, raw){
+  const s = norm(raw);
+  if (s === "" && st.type !== "choice") return "form";
+  switch (st.type){
+    case "choice": return raw === "" ? "form" : (+raw === st.ans ? "ok" : "bad");
+    case "num": {
+      const v = num(s); if (v === null) return value(s) === null ? "form" : "plain2";
+      if (close(v, st.ans, st.abs ?? 1e-9)) return "ok";
+      return st.tol && Math.abs(v - st.ans) <= st.tol * Math.abs(st.ans) ? "near" : "bad";
+    }
+    case "expr": {
+      const v = value(s); if (v === null) return "form";
+      if (!hasOp(s)) return "plain";
+      if (close(v, st.ans)) return "ok";
+      return Math.abs(v - st.ans) <= 0.01 * Math.abs(st.ans) ? "near" : "bad";
+    }
+    case "frac": {
+      const m = s.match(/^(\d+)\/(\d+)$/); if (!m) return "form";
+      const a = +m[1], b = +m[2]; if (!b || !close(a / b, st.ans)) return "bad";
+      return isPow10(b) ? "ok" : "near";
+    }
+    case "fracred": {
+      const m = s.match(/^(\d+)\/(\d+)$/); if (!m) return "form";
+      const a = +m[1], b = +m[2]; if (!b || a * st.den !== b * st.num) return "bad";
+      return gcd(a, b) === 1 ? "ok" : "near";
+    }
+    case "cd": {
+      const v = num(s); if (v === null || v !== Math.floor(v)) return "form";
+      if (v <= 1 || st.a % v || st.b % v) return "bad";
+      if (!st.greatest) return "ok";
+      return v === gcd(st.a, st.b) ? "ok" : "near";
+    }
+    case "rad": {
+      const v = value(s), target = value(st.ans); if (v === null) return "form";
+      if (!close(v, target, 1e-9)) return "bad";
+      return new RegExp(st.form).test(s) ? "ok" : "near";
+    }
+    case "roots": {
+      const r = value(st.ans), re = new RegExp(st.form);
+      let parts;
+      if (/^[±]/.test(s)) parts = [s.slice(1), "-" + s.slice(1)];
+      else parts = s.split(/;|أو|و/).filter(Boolean);
+      const vals = parts.map(value); if (vals.some(v => v === null)) return "form";
+      const pos = vals.some(v => close(v, r, 1e-9)), neg = vals.some(v => close(v, -r, 1e-9));
+      if (vals.some(v => !close(Math.abs(v), r, 1e-9))) return "bad";
+      const simple = parts.every(p => re.test(p.replace(/^-/, "")));
+      if (pos && neg) return simple ? "ok" : "near";
+      return "one";
+    }
+    case "cmp": return /^[<>=]$/.test(s) ? (s === st.ans ? "ok" : "bad") : "form";
+    case "order": {
+      const nums = s.split("<").map(num); if (nums.some(v => v === null)) return "form";
+      if (nums.length !== st.ans.length) return "bad";
+      const sorted = [...st.ans].sort((a, b) => a - b);
+      if (![...nums].sort((a, b) => a - b).every((v, i) => close(v, sorted[i]))) return "bad";
+      const good = nums.filter((v, i) => close(v, st.ans[i])).length;
+      return good === nums.length ? "ok" : (good >= nums.length / 2 ? "near" : "bad");
+    }
+    case "range": {
+      const v = num(s); if (v === null) return "form";
+      if (v > st.lo && v < st.hi) return "ok";
+      return (v > st.nlo && v < st.nhi) ? "near" : "bad";
+    }
+    case "text": return st.ans.some(a => s.replace(/[أإآ]/g, "ا") === a.replace(/[أإآ]/g, "ا")) ? "ok" : "bad";
+  }
+  return "bad";
+}
+const HELP = {num:"اكتب عددا فقط، مثل 12,5", expr:"اكتب عملية مثل 12 + 7 أو 2,5 × 4", frac:"اكتب الكسر بالشكل بسط/مقام، مثل 25/100",
+  fracred:"اكتب الكسر بالشكل بسط/مقام، مثل 3/7", cd:"اكتب عددا طبيعيا واحدا", rad:"اكتب عبارة مثل 5√3", roots:"اكتب الحلين مثل 2√3 ; -2√3 أو ±2√3",
+  cmp:"اكتب رمزا واحدا: < أو > أو =", order:"اكتب الأعداد مفصولة بالرمز < ، مثل 1,2 < 1,5 < 2", range:"اكتب عددا واحدا، مثل 3,25", text:"اكتب الاسم", choice:"اختر إجابة من القائمة"};
 
-        <!-- الجزء الأول: التمرين الأول -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <h2>الجزء الأول - التمرين الأول</h2>
-                <span class="pts-badge">5 نقاط</span>
-            </div>
-
-            <div class="q-item" id="card-1-1">
-                <div class="q-text">
-                    <span>السؤال (1): احسب <span class="math">PGCD(1071 ; 462)</span>.</span>
-                    <span class="attempts-tag" id="att-1-1">المحاولات المتبقية: 3 | (2 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-1-1" class="ltr-in" placeholder="اكتب النتيجة هنا">
-                    <button class="btn-check" id="btn-1-1" onclick="verify('1-1')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-1-1"></div>
-                <div class="solution-box" id="sol-1-1">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">نطبق خوارزمية إقليدس (القسمات المتتابعة):</span>
-                    <span class="step">• <span class="math">1071 = 462 × 2 + 147</span></span>
-                    <span class="step">• <span class="math">462 = 147 × 3 + 21</span></span>
-                    <span class="step">• <span class="math">147 = 21 × 7 + 0</span></span>
-                    <span class="step">آخر باقٍ غير معدوم هو 21، إذن: <strong><span class="math">PGCD(1071 ; 462) = 21</span></strong>.</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-1-2">
-                <div class="q-text">
-                    <span>السؤال (2): اكتب الكسر <span class="math">462 / 1071</span> على شكل كسر غير قابل للاختزال.</span>
-                    <span class="attempts-tag" id="att-1-2">المحاولات المتبقية: 3 | (1.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-1-2" class="ltr-in" placeholder="اكتب الكسر بصيغة البسط/المقام">
-                    <button type="button" class="sym-btn" onclick="addChar('in-1-2', '/')">رمز خط الكسر (/)</button>
-                    <button class="btn-check" id="btn-1-2" onclick="verify('1-2')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-1-2"></div>
-                <div class="solution-box" id="sol-1-2">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">لاختزال الكسر إلى أبسط شكل ممكن، نقسم كلاً من البسط والمقام على <span class="math">PGCD(1071 ; 462) = 21</span>:</span>
-                    <span class="step">• البسط: <span class="math">462 ÷ 21 = 22</span></span>
-                    <span class="step">• المقام: <span class="math">1071 ÷ 21 = 51</span></span>
-                    <span class="step">إذن الكسر غير القابل للاختزال هو: <strong><span class="math">22 / 51</span></strong>.</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-1-3">
-                <div class="q-text">
-                    <span>السؤال (3): هل العددان 1071 و 460 أوليان فيما بينهما؟ علّل بحساب قاسمهما المشترك الأكبر.</span>
-                    <span class="attempts-tag" id="att-1-3">المحاولات المتبقية: 3 | (1.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <select id="in-1-3-choice">
-                        <option value="">-- هل هما أوليان فيما بينهما؟ --</option>
-                        <option value="yes">نعم، أوليان فيما بينهما</option>
-                        <option value="no">لا، ليسا أوليين فيما بينهما</option>
-                    </select>
-                    <input type="text" id="in-1-3-pgcd" class="ltr-in" placeholder="قيمة PGCD(1071;460)">
-                    <button class="btn-check" id="btn-1-3" onclick="verify('1-3')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-1-3"></div>
-                <div class="solution-box" id="sol-1-3">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">نحسب <span class="math">PGCD(1071 ; 460)</span> بخوارزمية إقليدس:</span>
-                    <span class="step">• <span class="math">1071 = 460 × 2 + 151</span></span>
-                    <span class="step">• <span class="math">460 = 151 × 3 + 7</span></span>
-                    <span class="step">• <span class="math">151 = 7 × 21 + 4</span></span>
-                    <span class="step">• <span class="math">7 = 4 × 1 + 3</span></span>
-                    <span class="step">• <span class="math">4 = 3 × 1 + 1</span></span>
-                    <span class="step">بما أن القاسم المشترك الأكبر لهما هو <strong>1</strong>، فإن العددين 1071 و 460 <strong>نعم أوليان فيما بينهما</strong>.</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- الجزء الأول: التمرين الثاني -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <h2>الجزء الأول - التمرين الثاني</h2>
-                <span class="pts-badge">5 نقاط</span>
-            </div>
-
-            <div class="context-box">
-                المعطيات: <span class="math">A = √50 - 3√8 + √18</span> &nbsp; ، &nbsp; <span class="math">B = 6 / √2</span>
-            </div>
-
-            <div class="q-item" id="card-2-1">
-                <div class="q-text">
-                    <span>السؤال (1): اكتب العدد <span class="math">A</span> على الشكل <span class="math">a√2</span>.</span>
-                    <span class="attempts-tag" id="att-2-1">المحاولات المتبقية: 3 | (2 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-2-1" class="ltr-in" placeholder="اكتب قيمة A أو قيمة a">
-                    <button type="button" class="sym-btn" onclick="addChar('in-2-1', '√')">رمز الجذر (√)</button>
-                    <button class="btn-check" id="btn-2-1" onclick="verify('2-1')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-2-1"></div>
-                <div class="solution-box" id="sol-2-1">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">نفكك الأعداد تحت الجذر إلى جداء عدد ناطق مربع تام في 2:</span>
-                    <span class="step">• <span class="math">A = √(25 × 2) - 3√(4 × 2) + √(9 × 2)</span></span>
-                    <span class="step">• <span class="math">A = 5√2 - 3 × 2√2 + 3√2</span></span>
-                    <span class="step">• <span class="math">A = 5√2 - 6√2 + 3√2 = (5 - 6 + 3)√2</span></span>
-                    <span class="step">إذن: <strong><span class="math">A = 2√2</span></strong> (حيث <span class="math">a = 2</span>).</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-2-2">
-                <div class="q-text">
-                    <span>السؤال (2): اكتب العدد <span class="math">B = 6 / √2</span> على شكل نسبة مقامها عدد ناطق.</span>
-                    <span class="attempts-tag" id="att-2-2">المحاولات المتبقية: 3 | (1.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-2-2" class="ltr-in" placeholder="اكتب النتيجة هنا">
-                    <button type="button" class="sym-btn" onclick="addChar('in-2-2', '√')">رمز الجذر (√)</button>
-                    <button type="button" class="sym-btn" onclick="addChar('in-2-2', '/')">رمز الكسر (/)</button>
-                    <button class="btn-check" id="btn-2-2" onclick="verify('2-2')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-2-2"></div>
-                <div class="solution-box" id="sol-2-2">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">نضرب كلاً من البسط والمقام في <span class="math">√2</span> للتخلص من الجذر في المقام:</span>
-                    <span class="step">• <span class="math">B = (6 × √2) / (√2 × √2) = 6√2 / 2</span></span>
-                    <span class="step">وباختزال 6 على 2 نجد: <strong><span class="math">B = 3√2</span></strong>.</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-2-3">
-                <div class="q-text">
-                    <span>السؤال (3): بيّن أن الجداء <span class="math">A × B</span> عدد طبيعي (احسب قيمته النهائية).</span>
-                    <span class="attempts-tag" id="att-2-3">المحاولات المتبقية: 3 | (1.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-2-3" class="ltr-in" placeholder="اكتب ناتج A × B">
-                    <button class="btn-check" id="btn-2-3" onclick="verify('2-3')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-2-3"></div>
-                <div class="solution-box" id="sol-2-3">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">نعوض بقيمتي <span class="math">A = 2√2</span> و <span class="math">B = 3√2</span>:</span>
-                    <span class="step">• <span class="math">A × B = 2√2 × 3√2 = 2 × 3 × (√2 × √2)</span></span>
-                    <span class="step">• <span class="math">A × B = 6 × 2 = 12</span></span>
-                    <span class="step">إذن: <strong><span class="math">A × B = 12</span></strong> وهو عدد طبيعي.</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- الجزء الثاني: الوضعية التقويمية -->
-        <div class="exercise-card">
-            <div class="exercise-header">
-                <h2>الجزء الثاني - وضعية تقويمية (تبليط قاعة)</h2>
-                <span class="pts-badge">10 نقاط</span>
-            </div>
-
-            <div class="context-box">
-                أرضية قاعة مستطيلة بعداها <span class="math">7,56 m</span> و <span class="math">4,20 m</span>. يريد المقاول تغطيتها ببلاطات مربعة متماثلة، دون قص، بأكبر بلاطات ممكنة.<br>
-                ثمن البلاطة الواحدة <span class="math">350 DA</span>، والمقاول يملك <span class="math">20000 DA</span>.<br>
-                <strong>المطلوب:</strong> هل يكفي المبلغ لشراء البلاط؟ (أجب عن المراحل التالية لتبرير جوابك):
-            </div>
-
-            <div class="q-item" id="card-3-1">
-                <div class="q-text">
-                    <span>المرحلة (1) من الوضعية: ما هو طول ضلع البلاطة الواحدة (بـ <span class="math">cm</span>)؟</span>
-                    <span class="attempts-tag" id="att-3-1">المحاولات المتبقية: 3 | (3.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-3-1" class="ltr-in" placeholder="اكتب طول الضلع بالسنتيمتر">
-                    <button class="btn-check" id="btn-3-1" onclick="verify('3-1')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-3-1"></div>
-                <div class="solution-box" id="sol-3-1">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">1) نحول البعدين إلى السنتيمتر: <span class="math">7,56 m = 756 cm</span> و <span class="math">4,20 m = 420 cm</span>.</span>
-                    <span class="step">2) بما أن البلاطات مربعة وأكبر ما يمكن ودون قص، فإن طول ضلع البلاطة هو <span class="math">PGCD(756 ; 420)</span>:</span>
-                    <span class="step">• <span class="math">756 = 420 × 1 + 336</span></span>
-                    <span class="step">• <span class="math">420 = 336 × 1 + 84</span></span>
-                    <span class="step">• <span class="math">336 = 84 × 4 + 0</span></span>
-                    <span class="step">إذن طول ضلع البلاطة الواحدة هو: <strong><span class="math">84 cm</span></strong> (أو <span class="math">0,84 m</span>).</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-3-2">
-                <div class="q-text">
-                    <span>المرحلة (2) من الوضعية: ما هو العدد الإجمالي للبلاطات اللازمة لتغطية الأرضية؟</span>
-                    <span class="attempts-tag" id="att-3-2">المحاولات المتبقية: 3 | (3 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-3-2" class="ltr-in" placeholder="اكتب عدد البلاطات">
-                    <button class="btn-check" id="btn-3-2" onclick="verify('3-2')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-3-2"></div>
-                <div class="solution-box" id="sol-3-2">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">• عدد البلاطات على الطول: <span class="math">756 ÷ 84 = 9</span> بلاطات.</span>
-                    <span class="step">• عدد البلاطات على العرض: <span class="math">420 ÷ 84 = 5</span> بلاطات.</span>
-                    <span class="step">• العدد الإجمالي للبلاطات لتغطية المساحة: <strong><span class="math">9 × 5 = 45</span> بلاطة</strong>.</span>
-                </div>
-            </div>
-
-            <div class="q-item" id="card-3-3">
-                <div class="q-text">
-                    <span>السؤال النهائي للوضعية: احسب التكلفة الإجمالية للبلاط، ثم حدد هل يكفي المبلغ (<span class="math">20000 DA</span>) لشرائه؟</span>
-                    <span class="attempts-tag" id="att-3-3">المحاولات المتبقية: 3 | (3.5 ن)</span>
-                </div>
-                <div class="input-area">
-                    <input type="text" id="in-3-3-cost" class="ltr-in" placeholder="ثمن كل البلاط (DA)">
-                    <select id="in-3-3-dec">
-                        <option value="">-- هل يكفي المبلغ؟ --</option>
-                        <option value="yes">نعم، المبلغ يكفي</option>
-                        <option value="no">لا، المبلغ لا يكفي</option>
-                    </select>
-                    <button class="btn-check" id="btn-3-3" onclick="verify('3-3')">تحقق من الإجابة</button>
-                </div>
-                <div class="feedback" id="fb-3-3"></div>
-                <div class="solution-box" id="sol-3-3">
-                    <h4>✔ الحل المفصل والشرح:</h4>
-                    <span class="step">• ثمن شراء البلاط: <span class="math">45 × 350 = 15750 DA</span>.</span>
-                    <span class="step">• المقارنة والقرار: بما أن <span class="math">15750 < 20000</span>، فإن <strong>المبلغ يكفي</strong> لشراء كل البلاط (ويبقى للمقاول <span class="math">4250 DA</span>).</span>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        let totalScore = 0;
-        const maxPoints = {
-            '1-1': 2, '1-2': 1.5, '1-3': 1.5,
-            '2-1': 2, '2-2': 1.5, '2-3': 1.5,
-            '3-1': 3.5, '3-2': 3, '3-3': 3.5
+let state = {};
+function refresh(){
+  const vals = Object.values(state), t = vals.reduce((a, x) => a + x.pts, 0), fin = vals.filter(x => x.done).length;
+  document.getElementById("score").textContent = fmtPts(t) + " / 20";
+  document.getElementById("progressText").textContent = fin ? ("الخطوات المنجزة: " + fin + " من " + vals.length) : "أجب عن الأسئلة للبدء";
+  document.getElementById("progressFill").style.width = (fin / vals.length * 100) + "%";
+}
+function build(){
+  const quiz = document.getElementById("quiz"); quiz.innerHTML = ""; state = {};
+  DATA.forEach((ex, ei) => {
+    const tot = ex.qs.reduce((a, q) => a + q.steps.reduce((b, s) => b + s.pts, 0), 0);
+    const card = document.createElement("section"); card.className = "card";
+    card.innerHTML = `<div class="cardhead"><h2>${ex.title}</h2><span class="pts">${fmtPts(tot)} نقاط</span></div><div class="subt">${ex.sub}</div><div class="intro">${ex.ctx}</div>`;
+    ex.qs.forEach((q, qi) => {
+      const qd = document.createElement("div"); qd.className = "question";
+      qd.innerHTML = `<div class="qtitle">${q.q}</div>`;
+      q.steps.forEach((st, si) => {
+        const id = `s${ei}_${qi}_${si}`, maxT = st.type === "choice" ? 1 : 3;
+        state[id] = {tries: 0, done: false, pts: 0};
+        const d = document.createElement("div"); d.className = "step";
+        const field = st.type === "choice"
+          ? `<select id="${id}"><option value="">-- اختر الإجابة --</option>${st.options.map((o, i) => `<option value="${i}">${o}</option>`).join("")}</select>`
+          : `<input id="${id}" type="text" autocomplete="off">`;
+        d.innerHTML = `<div class="slabel">${q.steps.length > 1 ? "الخطوة " + (si + 1) + ": " : ""}${st.label} <small>(${fmtPts(st.pts)} ن)</small></div>
+          <div class="row">${field}<button class="btn">تحقق</button><span class="tries"></span></div>
+          ${st.type === "choice" ? "" : `<div class="keys">${KEYS.map(k => `<button type="button" data-k="${k}">${k}</button>`).join("")}<button type="button" class="wide" data-k="⌫">مسح ⌫</button></div>`}
+          <div class="feedback"></div>
+          <div class="solution"><h4>الحل المفصل</h4>${st.expl}<span class="math">${st.calc}</span></div>`;
+        const inp = d.querySelector("#" + id), btn = d.querySelector(".btn"), fb = d.querySelector(".feedback"),
+              sol = d.querySelector(".solution"), tr = d.querySelector(".tries"), keys = d.querySelector(".keys");
+        if (keys) keys.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+          if (inp.disabled) return;
+          const k = b.dataset.k; let p = inp.selectionStart ?? inp.value.length, e = inp.selectionEnd ?? p;
+          if (k === "⌫"){ if (p === e && p > 0) p--; inp.value = inp.value.slice(0, p) + inp.value.slice(e); }
+          else { inp.value = inp.value.slice(0, p) + k + inp.value.slice(e); p += k.length; }
+          inp.focus(); inp.setSelectionRange(p, p);
+        }));
+        const say = (c, h) => { fb.className = "feedback " + c; fb.innerHTML = h; };
+        const finish = pts => { Object.assign(state[id], {done: true, pts}); inp.disabled = btn.disabled = true;
+          if (keys) keys.style.display = "none"; tr.textContent = ""; sol.style.display = "block"; refresh(); };
+        const check = () => {
+          const S = state[id]; if (S.done) return;
+          const r = grade(st, inp.value);
+          if (r === "form"){ say("hint", "لم أفهم كتابة الجواب. " + HELP[st.type]); return; }
+          if (r === "plain"){ say("hint", "المطلوب هنا كتابة <b>العملية</b> (مثلا: عدد + عدد) وليس النتيجة فقط."); return; }
+          if (r === "plain2"){ say("hint", "اكتب <b>النتيجة</b> فقط (عددا واحدا) وليس العملية."); return; }
+          S.tries++; const m = MULT[S.tries - 1];
+          if (r === "one" && S.tries < maxT){ tr.textContent = "المحاولات المتبقية: " + (maxT - S.tries);
+            say("hint", "وجدت حلا واحدا صحيحا، لكن للمعادلة حلا آخر. اكتب الحلين معا."); return; }
+          if (r === "ok"){ say("success", `إجابة صحيحة! أحسنت. حصلت على ${fmtPts(st.pts * m)} من ${fmtPts(st.pts)}.`); finish(st.pts * m); return; }
+          if (r === "near" || r === "one"){ say("hint", `جوابك قريب من الصحيح (أو صحيح غير مبسّط)، يُقبل بعلامة أقل: ${fmtPts(st.pts * m * NEAR)} من ${fmtPts(st.pts)}. انظر الحل المفصل.`); finish(st.pts * m * NEAR); return; }
+          if (S.tries < maxT){ tr.textContent = "المحاولات المتبقية: " + (maxT - S.tries);
+            say("wrong", `ليست صحيحة بعد. <b>تلميح:</b> ${st.hints[S.tries - 1]}`); inp.select?.(); return; }
+          say("wrong", maxT === 1 ? "إجابة غير صحيحة. اقرأ الحل المفصل." : "انتهت المحاولات الثلاث. اقرأ الحل المفصل جيدا ثم انتقل إلى الخطوة التالية.");
+          finish(0);
         };
-        const earnedPoints = {};
-        const attemptsLeft = {
-            '1-1': 3, '1-2': 3, '1-3': 3,
-            '2-1': 3, '2-2': 3, '2-3': 3,
-            '3-1': 3, '3-2': 3, '3-3': 3
-        };
-
-        const hints = {
-            '1-1': [
-                '💡 تلميح 1: استعمل خوارزمية إقليدس؛ ابدأ بقسمة العدد الأكبر 1071 على 462 وأوجد الباقي.',
-                '💡 تلميح 2: تابع القسمات: 1071 = 462×2 + 147، ثم اقسم 462 على 147... آخر باقٍ غير معدوم هو الـ PGCD.'
-            ],
-            '1-2': [
-                '💡 تلميح 1: لاختزال الكسر 462/1071 دفعة واحدة، اقسم كلاً من البسط والمقام على PGCD(1071;462) الذي وجدته في السؤال الأول.',
-                '💡 تلميح 2: اقسم البسط 462 على 21، واقسم المقام 1071 على 21، ثم اكتب الناتج على شكل بسط/مقام.'
-            ],
-            '1-3': [
-                '💡 تلميح 1: يكون عددان أوليين فيما بينهما إذا وفقط إذا كان قاسمهما المشترك الأكبر يساوي 1.',
-                '💡 تلميح 2: احسب PGCD(1071 ; 460) بخوارزمية إقليدس، ستجد أن آخر باقٍ غير معدوم هو 1.'
-            ],
-            '2-1': [
-                '💡 تلميح 1: اكتب الأعداد تحت الجذور (50 و 8 و 18) على شكل جداء عدد في 2 (أي 25×2 و 4×2 و 9×2).',
-                '💡 تلميح 2: بعد إخراج الجذور تحصل على: 5√2 - 3(2√2) + 3√2. احسب المعاملات (5 - 6 + 3) بجانب √2.'
-            ],
-            '2-2': [
-                '💡 تلميح 1: لجعل مقام النسبة 6/√2 عدداً ناطقاً، اضرب كلاً من البسط والمقام في √2.',
-                '💡 تلميح 2: تحصل على 6√2 / 2، لا تنسَ اختزال 6 على 2 لتحصل على أبسط شكل.'
-            ],
-            '2-3': [
-                '💡 تلميح 1: اضرب النتيجة التي وجدتها لـ A في النتيجة التي وجدتها لـ B، وتذكر أن √2 × √2 = 2.',
-                '💡 تلميح 2: احسب الجداء: 2√2 × 3√2 = 2 × 3 × 2.'
-            ],
-            '3-1': [
-                '💡 تلميح 1: حوّل أولاً بعدي القاعة من المتر إلى السنتيمتر (اضرب في 100 فتحصل على 756 cm و 420 cm).',
-                '💡 تلميح 2: طول ضلع أكبر بلاطة مربعة يقسم الطول والعرض معاً، فهو إذن PGCD(756 ; 420).'
-            ],
-            '3-2': [
-                '💡 تلميح 1: انتبه! البلاط يغطي مساحة الأرضية المستطيلة؛ اقسم الطول 756 على ضلع البلاطة (84)، واقسم العرض 420 على (84).',
-                '💡 تلميح 2: بعد إيجاد عدد البلاطات في الطول (9) وفي العرض (5)، اضرب العددين في بعضهما (9 × 5).'
-            ],
-            '3-3': [
-                '💡 تلميح 1: اضرب عدد البلاطات الإجمالي (45 بلاطة) في ثمن البلاطة الواحدة (350 DA).',
-                '💡 تلميح 2: قارن التكلفة التي وجدتها مع المبلغ الذي يملكه المقاول (20000 DA) لتعرف هل يكفي أم لا.'
-            ]
-        };
-
-        function norm(str) {
-            if (!str) return '';
-            const ar = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-            let s = str.toString().trim();
-            for (let i = 0; i < 10; i++) s = s.replace(new RegExp(ar[i], 'g'), i);
-            s = s.replace(/\s+/g, '').replace(/،/g, ',').replace(/جذر/g, '√').replace(/على/g, '/');
-            return s;
-        }
-
-        function addChar(id, ch) {
-            const el = document.getElementById(id);
-            if (!el || el.disabled) return;
-            el.value += ch;
-            el.focus();
-        }
-
-        function awardScore(qId, pts, isFinalLock) {
-            const prev = earnedPoints[qId] || 0;
-            if (pts > prev) {
-                totalScore += (pts - prev);
-                earnedPoints[qId] = pts;
-                document.getElementById('scoreDisplay').innerText = `${totalScore} / 20`;
-            }
-            if (isFinalLock) {
-                document.getElementById(`card-${qId}`).classList.add('solved');
-                document.getElementById(`btn-${qId}`).disabled = true;
-                document.getElementById(`sol-${qId}`).style.display = 'block';
-                if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-            }
-        }
-
-        function handleWrong(qId, customWarning) {
-            attemptsLeft[qId]--;
-            const rem = attemptsLeft[qId];
-            document.getElementById(`att-${qId}`).innerText = `المحاولات المتبقية: ${rem} | (${maxPoints[qId]} ن)`;
-            const fb = document.getElementById(`fb-${qId}`);
-
-            if (rem > 0) {
-                const hintIndex = (rem === 2) ? 0 : 1;
-                fb.className = 'feedback hint';
-                fb.innerHTML = (customWarning ? customWarning + '<br>' : '❌ إجابة غير صحيحة، حاول مرة أخرى.<br>') +
-                               `<strong>${hints[qId][hintIndex]}</strong> (بقي لك ${rem} محاولة)`;
-            } else {
-                fb.className = 'feedback fail';
-                fb.innerHTML = '⚠️ استنفدت محاولاتك الثلاث في هذا السؤال. إليك الحل النموذجي المفصل مع الشرح لتستفيد منه:';
-                document.getElementById(`card-${qId}`).classList.add('failed');
-                document.getElementById(`btn-${qId}`).disabled = true;
-                document.getElementById(`sol-${qId}`).style.display = 'block';
-            }
-        }
-
-        function verify(qId) {
-            const fb = document.getElementById(`fb-${qId}`);
-
-            if (qId === '1-1') {
-                const v = norm(document.getElementById('in-1-1').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب إجابتك أولاً قبل الضغط على الزر.'; return; }
-                if (v === '21') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 إجابة صحيحة وممتازة! حصلت على العلامة الكاملة (2 / 2).';
-                    awardScore('1-1', 2, true);
-                } else {
-                    handleWrong('1-1');
-                }
-            }
-
-            else if (qId === '1-2') {
-                const v = norm(document.getElementById('in-1-2').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب الكسر أولاً.'; return; }
-                if (v === '22/51') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 أحسنت! الكسر 22/51 غير قابل للاختزال. حصلت على العلامة الكاملة (1.5 / 1.5).';
-                    awardScore('1-2', 1.5, true);
-                } else if (v === '154/357' || v === '66/153') {
-                    awardScore('1-2', 0.75, false);
-                    handleWrong('1-2', '⚠️ انتبه: الكسر الذي كتبته صحيح ولكنه <strong>غير مختزل إلى أبسط شكل</strong>! منحتك نصف النقطة (0.75 ن)، اختزله أكثر بالقسمة على 21 للحصول على النقطة الكاملة.');
-                } else {
-                    handleWrong('1-2');
-                }
-            }
-
-            else if (qId === '1-3') {
-                const c = document.getElementById('in-1-3-choice').value;
-                const p = norm(document.getElementById('in-1-3-pgcd').value);
-                if (!c || !p) { fb.className='feedback hint'; fb.innerHTML='⚠️ يرجى اختيار (نعم/لا) وكتابة قيمة الـ PGCD للتعليل.'; return; }
-                if (c === 'yes' && p === '1') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 ممتاز! بما أن PGCD = 1 فهما أوليان فيما بينهما (1.5 / 1.5).';
-                    awardScore('1-3', 1.5, true);
-                } else if (c === 'yes' && p !== '1') {
-                    awardScore('1-3', 0.75, false);
-                    handleWrong('1-3', '⚠️ جوابك (نعم أوليان) صحيح، لكن تعليلك بقيمة الـ PGCD غير دقيق (منحتك 0.75 ن). صحح قيمة القاسم المشترك الأكبر!');
-                } else {
-                    handleWrong('1-3');
-                }
-            }
-
-            else if (qId === '2-1') {
-                const v = norm(document.getElementById('in-2-1').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب إجابتك أولاً.'; return; }
-                if (v === '2√2' || v === '2*√2' || v === '2' || v === 'a=2') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 إجابة صحيحة! A = 2√2 (حصلت على 2 / 2).';
-                    awardScore('2-1', 2, true);
-                } else if (v === '√8' || v === '5√2-6√2+3√2') {
-                    awardScore('2-1', 1, false);
-                    handleWrong('2-1', '⚠️ حسابك صحيح لكن <strong>العبارة غير مبسطة</strong> على الشكل a√2! منحتك نصف العلامة (1 ن)، بسطها إلى 2√2 لتنال العلامة الكاملة.');
-                } else {
-                    handleWrong('2-1');
-                }
-            }
-
-            else if (qId === '2-2') {
-                const v = norm(document.getElementById('in-2-2').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب إجابتك أولاً.'; return; }
-                if (v === '3√2' || v === '3*√2' || v === '3√2/1') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 رائع! B = 3√2 في أبسط شكل (1.5 / 1.5).';
-                    awardScore('2-2', 1.5, true);
-                } else if (v === '6√2/2') {
-                    awardScore('2-2', 0.75, false);
-                    handleWrong('2-2', '⚠️ ممتاز، لقد جعلت المقام ناطقاً (6√2/2)، لكنك <strong>لم تختزل الكسر</strong>! منحتك نصف العلامة (0.75 ن)، اختزل 6 على 2 لتنال العلامة الكاملة.');
-                } else {
-                    handleWrong('2-2');
-                }
-            }
-
-            else if (qId === '2-3') {
-                const v = norm(document.getElementById('in-2-3').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب النتيجة أولاً.'; return; }
-                if (v === '12') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 أحسنت! A × B = 12 وهو عدد طبيعي (1.5 / 1.5).';
-                    awardScore('2-3', 1.5, true);
-                } else if (v === '6×2' || v === '6*2' || v === '6√4') {
-                    awardScore('2-3', 0.75, false);
-                    handleWrong('2-3', '⚠️ خطوتك صحيحة ولكن <strong>أكمل الحساب النهائي</strong> لتبين أنه عدد طبيعي! منحتك نصف العلامة (0.75 ن).');
-                } else {
-                    handleWrong('2-3');
-                }
-            }
-
-            else if (qId === '3-1') {
-                let v = norm(document.getElementById('in-3-1').value).replace(/cm/gi, '');
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب طول الضلع أولاً.'; return; }
-                if (v === '84') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 ممتاز! طول ضلع البلاطة هو 84 cm (حصلت على 3.5 / 3.5).';
-                    awardScore('3-1', 3.5, true);
-                } else if (v === '0.84' || v === '0,84' || v === '0.84m') {
-                    awardScore('3-1', 2.5, false);
-                    handleWrong('3-1', '⚠️ إجابتك بالمتر (0.84 m) صحيحة، لكن السؤال طلبها بالسنتيمتر (cm)! منحتك (2.5 ن)، اكتبها بالسنتيمتر لتنال العلامة الكاملة.');
-                } else {
-                    handleWrong('3-1');
-                }
-            }
-
-            else if (qId === '3-2') {
-                const v = norm(document.getElementById('in-3-2').value);
-                if (!v) { fb.className='feedback hint'; fb.innerHTML='⚠️ اكتب عدد البلاطات أولاً.'; return; }
-                if (v === '45') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 أحسنت! عدد البلاطات هو 45 بلاطة (3 / 3).';
-                    awardScore('3-2', 3, true);
-                } else if (v === '9×5' || v === '9*5' || v === '5×9') {
-                    awardScore('3-2', 1.5, false);
-                    handleWrong('3-2', '⚠️ العملية (9 × 5) صحيحة، احسب الناتج النهائي لتحصل على العلامة الكاملة!');
-                } else if (v === '14' || v === '28') {
-                    handleWrong('3-2', '❌ انتبه: لقد جمعت (9 + 5) بدل ضربهما! التبليط يغطي المساحة كلها لذا نضرب عدد بلاطات الطول في عدد بلاطات العرض.');
-                } else {
-                    handleWrong('3-2');
-                }
-            }
-
-            else if (qId === '3-3') {
-                const cost = norm(document.getElementById('in-3-3-cost').value).replace(/DA/gi, '');
-                const dec = document.getElementById('in-3-3-dec').value;
-                if (!cost || !dec) { fb.className='feedback hint'; fb.innerHTML='⚠️ يرجى كتابة التكلفة واختيار القرار معاً.'; return; }
-                if (cost === '15750' && dec === 'yes') {
-                    fb.className = 'feedback success';
-                    fb.innerHTML = '🎉 عمل رائع ومتكامل! التكلفة 15750 DA والمبلغ يكفي (3.5 / 3.5).';
-                    awardScore('3-3', 3.5, true);
-                } else if (cost === '15750' && dec === 'no') {
-                    awardScore('3-3', 2, false);
-                    handleWrong('3-3', '⚠️ حساب التكلفة (15750 DA) صحيح، لكن انتبه للمقارنة: المقاول يملك 20000 DA، أي أكثر من 15750 DA!');
-                } else {
-                    handleWrong('3-3');
-                }
-            }
-        }
-    </script>
+        btn.addEventListener("click", check);
+        inp.addEventListener("keydown", ev => { if (ev.key === "Enter") check(); });
+        qd.appendChild(d);
+      });
+      card.appendChild(qd);
+    });
+    quiz.appendChild(card);
+  });
+  refresh();
+}
+document.getElementById("reset").addEventListener("click", () => { build(); window.scrollTo({top: 0, behavior: "smooth"}); });
+build();
+</script>
 </body>
 </html>
